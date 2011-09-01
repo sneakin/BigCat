@@ -1,7 +1,7 @@
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "BigCat"
+    gem.name = "bigcat"
     gem.summary = %Q{RAWR!!}
     gem.description = %Q{I cat BIG.}
     gem.email = "sneakin+bigcat@semanticgap.com"
