@@ -21,12 +21,12 @@ describe 'bigcat' do
     end
 
     context 'immediate newline' do
-#       it "writes two empty lines" do
-#         run do |io|
-#           io.puts("")
-#           io.read(2).should == "\n\n"
-#         end
-#       end
+      it "writes two empty lines" do
+        run do |io|
+          io.puts("")
+          io.read(2).should == "\n\n"
+        end
+      end
 
       it "exits on EOF" do
         ret = run do |io|
