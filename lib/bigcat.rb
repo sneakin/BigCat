@@ -21,11 +21,10 @@ module BigCat
     end
   end
 
-  class Command
-    attr_reader :input, :output
+  class Formatter
+    attr_reader :output
 
-    def initialize(input = $stdin, output = $stdout)
-      @input = input
+    def initialize(output)
       @output = output
     end
 
@@ -35,9 +34,18 @@ module BigCat
       output.puts(string.big_bottom_half)
       output.flush
     end
+  end
+
+  class Command
+    attr_reader :input, :formatter
+
+    def initialize(input, formatter)
+      @input = input
+      @formatter = formatter
+    end
 
     def run!
-      write(input.readline) while true
+      @formatter.write(input.readline) while true
     rescue EOFError
     end
   end

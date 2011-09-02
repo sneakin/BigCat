@@ -1,10 +1,14 @@
+require 'timeout'
+
 describe 'bigcat' do
   let!(:bigcat) { Pathname.new(__FILE__).parent.parent.parent.join('bin', 'bigcat') }
 
-  def run(&block)
-    IO.popen(bigcat, 'r+') do |io|
+  def run(*arguments, &block)
+    IO.popen("#{bigcat} #{arguments.join(' ')}", 'r+') do |io|
       if block
-        block.call(io)
+        Timeout::timeout(10) do
+          block.call(io)
+        end
       else
         io.close
       end
@@ -80,6 +84,27 @@ describe 'bigcat' do
           io.readline.should == "\e#4hello\n"
           io.readline.should == "\e#3world\n"
           io.readline.should == "\e#4world\n"
+        end
+      end
+    end
+  end
+
+  context 'with a filename as an argument' do
+    let!(:path) { Pathname.new(__FILE__).parent.parent.parent.join('README.md') }
+    let(:contents) { File.readlines(path) }
+
+    it "embiggens each line of the file" do
+      run(path) do |io|
+        contents[-1] << "\n" unless contents[-1][-1] == "\n"
+
+        contents.each do |line|
+          if line == "\n"
+            io.readline.should == "\n"
+            io.readline.should == "\n"
+          else
+            io.readline.should == "\e#3#{line}"
+            io.readline.should == "\e#4#{line}"
+          end
         end
       end
     end
