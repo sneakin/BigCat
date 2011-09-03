@@ -4,16 +4,6 @@ require 'pathname'
 $: << Pathname.new(__FILE__).parent.parent.join('lib')
 
 require 'bigcat'
-
-if ARGV[0]
-  input = File.open(ARGV[0], 'r')
-else
-  input = $stdin
-end
-
-begin
-  formatter = BigCat::Formatter.new($stdout)
-  BigCat::Command.new(input, formatter).run!
-ensure
-  input.close
+if BigCat::Command.run!(ARGV, $stdin, $stdout)
+  exit(1)
 end

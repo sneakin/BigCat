@@ -37,16 +37,71 @@ module BigCat
   end
 
   class Command
-    attr_reader :input, :formatter
+    attr_accessor :formatter
+    attr_reader :streams
 
-    def initialize(input, formatter)
-      @input = input
-      @formatter = formatter
+    class << self
+      def run!(arguments, input, output)
+        status = false
+        inst = self.new
+
+        if arguments.empty?
+          inst.add_stream(input)
+        else
+          status = arguments.collect { |arg|
+            inst.add_file(arg)
+          }.any? { |arg| arg == false }
+        end
+
+        inst.formatter = BigCat::Formatter.new(output)
+        inst.run!
+
+        status
+      end
+    end
+
+    def initialize
+      @streams = Array.new
+    end
+
+    def add_stream(io)
+      @streams << io
+    end
+
+    def add_file(path)
+      if File.file?(path)
+        add_stream(File.open(path, 'r'))
+        true
+      else
+        $stderr.puts "No such file: #{path}"
+        false
+      end
     end
 
     def run!
-      @formatter.write(input.readline) while true
-    rescue EOFError
+      @streams.each { |io|
+        read(io)
+      }
+    end
+
+    private
+
+    def read(stream)
+      stream.each_line do |line|
+        formatter.write(line)
+      end
+
+      stream.close
+    end
+
+    def read_file(path)
+      File.open(path, 'r') do |f|
+        read_stream(f)
+      end
+
+      return true
+    rescue Errno::ENOENT, Errno::EISDIR
+      return false
     end
   end
 end
