@@ -93,15 +93,5 @@ module BigCat
 
       stream.close
     end
-
-    def read_file(path)
-      File.open(path, 'r') do |f|
-        read_stream(f)
-      end
-
-      return true
-    rescue Errno::ENOENT, Errno::EISDIR
-      return false
-    end
   end
 end

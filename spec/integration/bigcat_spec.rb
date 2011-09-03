@@ -1,3 +1,4 @@
+require 'rspec'
 require 'timeout'
 require 'open3'
 

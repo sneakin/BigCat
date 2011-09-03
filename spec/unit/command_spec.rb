@@ -59,6 +59,45 @@ describe BigCat::Command do
     end
   end
 
+  describe '#add_file' do
+    context 'actual file' do
+      it "opens the file for reading" do
+        File.should_receive(:open).with(__FILE__, 'r')
+        subject.add_file(__FILE__)
+      end
+
+      it "adds the file to the stream" do
+        lambda { subject.add_file(__FILE__) }.should change(subject, :streams)
+      end
+
+      it "returns true" do
+        subject.add_file(__FILE__).should be_true
+      end
+    end
+
+    context 'directory' do
+      it "writes no such file to stderr" do
+        $stderr.should_receive(:puts).with("No such file: .")
+        subject.add_file(".")
+      end
+
+      it "returns false" do
+        subject.add_file(".").should be_false
+      end
+    end
+
+    context 'no file' do
+      it "writes no such file to stderr" do
+        $stderr.should_receive(:puts).with("No such file: bah.txt")
+        subject.add_file("bah.txt")
+      end
+
+      it "returns false" do
+        subject.add_file("bah.txt").should be_false
+      end
+    end
+  end
+
   describe '#run!' do
     subject { described_class.new }
 
@@ -99,6 +138,13 @@ describe BigCat::Command do
 
           subject.run!
         end
+
+        it "closes the stream" do
+          input.should_receive(:close)
+          formatter.as_null_object
+
+          subject.run!
+        end
       end
 
       context 'with multiple streams' do
@@ -115,6 +161,13 @@ describe BigCat::Command do
         it "writes each line of each stream to the formatter in the order of the streams" do
           formatter.should_receive(:write).with("alpha\n")
           formatter.should_receive(:write).with("beta\n")
+
+          subject.run!
+        end
+
+        it "closes each stream" do
+          streams.each { |s| s.should_receive(:close) }
+          formatter.as_null_object
 
           subject.run!
         end
