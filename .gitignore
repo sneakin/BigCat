@@ -4,3 +4,5 @@
 pkg
 spec.html
 coverage
+.yardoc
+doc

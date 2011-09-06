@@ -24,8 +24,15 @@ end
 namespace :spec do
   RSpec::Core::RakeTask.new(:coverage) do |spec|
     spec.pattern = 'spec/**/*_spec.rb'
-    spec.rspec_opts = [ '--format', 'html', '-o', 'spec.html', '-f', 'progress' ]
+    spec.rspec_opts = [ '--format', 'html', '-o', 'doc/spec.html', '-f', 'progress' ]
     spec.rcov = true
     spec.rcov_opts = [ '-e', "\\.gems,_spec\\.rb"]
   end
+end
+
+require 'yard'
+require 'yard/rake/yardoc_task'
+YARD::Rake::YardocTask.new :doc do |t|
+  t.files = [ "README.md", "lib/**/*.rb"] 
+  t.options += [ "-o", "doc/api" ]
 end
