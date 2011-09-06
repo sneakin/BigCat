@@ -1,32 +1,44 @@
 BigCat
 ===
 
-ROAR!! I CATZ BIG!!
+ROAR!! I CATZ BIG IN YER TERM!!
 
 
 Installation
 ---
 
-$ gem install bigcat
+    $ gem install bigcat
 
 
 Usage
 ---
 
-$ bigcat
-Hello^D
+BigCat works a lot like good ole `cat`. Without arguments it reads from STDIN and writes to STDOUT:
 
-$ echo hello | bigcat
+    $ bigcat
+    Hello^D
+
+You can also pipe text to BigCat:
+
+    $ echo hello | bigcat
+
+Files can also be passed as arguments:
+
+    $ bigcat README.md
 
 
 Development
 ---
 
-You need Ruby and Bundler and then you can:
+BigCat is hosted on GitHub. You can clone the repository by running:
 
-$ bundle install
-$ bundle exec bin/bigcat
-$ bundle exec rake -T
+    $ git clone git://github.com/sneakin/BigCat.git
+
+To run BigCat from your clone, you will need Ruby and Bundler. Then within your clone you can:
+
+    $ bundle install
+    $ bundle exec bin/bigcat
+    $ bundle exec rake -T
 
 
 License
